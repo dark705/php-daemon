@@ -6,6 +6,12 @@ define("CONST_KEYXOR", null);
 define("CONST_CHECKTIME", 60 * 60);
 define("CONST_DEBUG", true);
 
+$child_pid = pcntl_fork();
+if( $child_pid ) {
+    exit(0);
+}
+posix_setsid();
+declare(ticks=1);
 
 require_once('CurlPost.php');
 require_once('Daemon.php');
@@ -32,19 +38,17 @@ $check = function () {
 
 try {
 	$daemon = new Daemon(basename(__FILE__, '.php') . '.pid', CONST_CHECKTIME);
-	if(!CONST_DEBUG){
+	if (!CONST_DEBUG) {
 		fclose(STDIN);
 		fclose(STDOUT);
 		fclose(STDERR);
     }
 	$daemon->run($check);
-	
 } catch (Exception $error) {
     $message = $error->getMessage();
-	if(CONST_DEBUG){
+	if (CONST_DEBUG) {
 		echo $message;
 	} else {
-		mail(CONST_EMAIL, 'Error', $message);
+		//mail(CONST_EMAIL, 'Error', $message);
 	}
 }
-
