@@ -2,27 +2,32 @@
 class CurlPost{
     private $url;
     private $debug;
-    private $options;
+    private $curlopt;
 
-    public function __construct($url, $debug = false){
+    public function __construct($url = null, $curlopt = null, $debug = false){
         $this->url = $url;
-        $this->debug = $debug;
+		if (!$curlopt){
+			$this->curlopt = [
+				CURLOPT_FAILONERROR => true,
+				CURLOPT_URL => $url,
+				CURLOPT_HEADER => false,
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_POST => true,
+			];
+		} else {
+			$this->curlopt =  $curlopt;
+		}
+		$this->debug = $debug;
     }
 
-    public function setParams($params){
-        $this->options = [
-            CURLOPT_FAILONERROR => true,
-            CURLOPT_URL => $this->url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => $params,
-        ];
+    public function setFields($fields){
+        $this->curlopt[CURLOPT_POSTFIELDS] = $fields;
         return $this;
     }
 
     public function getResponce(){
         $ch = curl_init();
-        curl_setopt_array($ch, $this->options);
+        curl_setopt_array($ch, $this->curlopt);
         $responce = curl_exec($ch);
         if($this->debug){
 				curl_setopt($ch, CURLINFO_HEADER_OUT, true);
