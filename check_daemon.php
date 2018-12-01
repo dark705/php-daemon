@@ -12,13 +12,13 @@ require_once('Daemon.php');
 require_once('functions.php');
 
 $check = function () {
-	$curl = new CurlPost(CONST_URL, CONST_DEBUG);
-	$responce = $curl->setParams('method=get')->getResponceJson();
+	$curl = new CurlPost(CONST_URL, null, CONST_DEBUG);
+	$responce = $curl->setFields('method=get')->getResponceJson();
 	if (!array_key_exists('message response', $responce)){
 		throw new Exception('В принятых данных не обнаружено свойство: "message response". Данные:' . print_r($responce, true) . PHP_EOL);
 	}
 	$message = base64_encode(xorEncoder($responce['message response'], CONST_KEYXOR));
-	$responce = $curl->setParams('method=UPDATE&message=' . $message)->getResponceJson();
+	$responce = $curl->setFields('method=UPDATE&message=' . $message)->getResponceJson();
 	if (!is_null($responce['errorCode']) || $responce['response'] != 'Success') {
 		throw new Exception('Ошибка в errorCode или в response' .  PHP_EOL);
 	} else {
@@ -32,14 +32,19 @@ $check = function () {
 
 try {
 	$daemon = new Daemon(basename(__FILE__, '.php') . '.pid', CONST_CHECKTIME);
-	//fclose(STDIN);
-	//fclose(STDOUT);
-	//fclose(STDERR);
+	if(!CONST_DEBUG){
+		fclose(STDIN);
+		fclose(STDOUT);
+		fclose(STDERR);
+    }
 	$daemon->run($check);
 	
 } catch (Exception $error) {
     $message = $error->getMessage();
-    echo $message;
-   //mail(CONST_EMAIL, 'Error', $message);
+	if(CONST_DEBUG){
+		echo $message;
+	} else {
+		mail(CONST_EMAIL, 'Error', $message);
+	}
 }
 
