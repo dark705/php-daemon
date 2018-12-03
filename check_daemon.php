@@ -47,7 +47,6 @@ try {
     $message = $error->getMessage();
 	if (CONST_DEBUG) {
 		echo $message;
-	} else {
-		mail(CONST_EMAIL, 'Error on PHP check daemon', $message);
 	}
+	mail(CONST_EMAIL, 'Error on PHP check daemon', $message);
 }
