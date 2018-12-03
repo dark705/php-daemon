@@ -4,9 +4,9 @@ class CurlPost{
     private $debug;
     private $curlopt;
 
-    public function __construct($url = null, $curlopt = null, $debug = false){
+    public function __construct($url = null, $options = null, $debug = false){
         $this->url = $url;
-		if (!$curlopt){
+		if (!$options){
 			$this->curlopt = [
 				CURLOPT_FAILONERROR => true,
 				CURLOPT_URL => $url,
