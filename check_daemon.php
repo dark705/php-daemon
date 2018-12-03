@@ -12,9 +12,9 @@ if( $child_pid ) {
 posix_setsid();
 declare(ticks=1);
 
-require_once('CurlPost.php');
-require_once('Daemon.php');
-require_once('functions.php');
+require_once(__DIR__.'/ClassesAndFunctions/CurlPost.php');
+require_once(__DIR__.'/ClassesAndFunctions/Daemon.php');
+require_once(__DIR__.'/ClassesAndFunctions/functions.php');
 
 $check = function () {
 	$curl = new CurlPost(CONST_URL, null, CONST_DEBUG);

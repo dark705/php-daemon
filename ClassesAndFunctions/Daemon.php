@@ -4,16 +4,16 @@ class Daemon
 	private $stop;
 	private $sleep;
 	
-	public function __construct($file = 'daemon.pid', $sleep = 10)
+	public function __construct($pid_file = 'daemon.pid', $sleep = 10)
     {
-        if ($this->isDaemonActive($file)) {
+        if ($this->isDaemonActive($pid_file)) {
             echo 'Daemon is already run!' . PHP_EOL;
             exit(0);
         }
 		$this->stop = false;
         $this->sleep = $sleep;
         pcntl_signal(SIGTERM,[$this,'signalHandler']);
-        file_put_contents($file, getmypid());
+        file_put_contents($pid_file, getmypid());
     }
 	
     public function run($func){
